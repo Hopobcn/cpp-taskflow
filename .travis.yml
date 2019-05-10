@@ -1,19 +1,74 @@
-sudo: required
-  
 # Enable C++ support
 language: cpp
-
+#travis-ci:
+#  com:
 # enable cache
 cache:
   directories:
     - ${TRAVIS_BUILD_DIR}/deps
 
-# environment 
-matrix:
-  include:
+#env:
+#  global:
+#  - CONAN_USERNAME="hopobcn"
+#  - CONAN_PACKAGE_NAME="cpp-taskflow"
+#  - CONAN_HEADER_ONLY="True"
+#  - CONAN_UPLOAD="https://api.bintray.com/conan/hopobcn/public"
+#  - secure: mpx6qypPN3OFO4RZS/Kg6dAAAzizoM/Rz2e1L3S/9wjD3h/pN324JZbbKlmDixNVVSbbdHH74Z6HxCjQ9fFUOUYs+eLhwxlKt3wpgMTW2Sqraw+PqgUyU+H11D4nrcRNvpZbSQBB2WZP8PLSyzlSD1XlNkNgCqXXcV5A0dpSXm+6P8c5A/3hQ2i5x3x6Y1IAlfnvQO2HAGI5VD9XhLC280jydYNSaageKUgsXbN3p5bnjfWPcybOoK8i159mjkM1MOZX2awVqIrqXSyTtqbKPEhjY3h9/wBAXZG8iONef9rbiPKId31wnhtXzURTd93z5GjK52z0Khn2VKNcBh0dA5kU+6yVEAOoHIGRz0/Vskdgt60bMsIdWrftb9j16aegTiFprrJ66uARo6Mf9GHUM4z8dF7GiU3RNn7dwKiqWJ0HxMaXhNQuVONARVP/tKYAf9NadQ2DMCxTrfxFZqIjxXMJ9zwoA6wkJDwEHuGmEyjgRwBHVa9JG23Lqc8Bdg5M07RYWbZWQBXsRAvvr8QfCninP1eYgfECMfZ5PCOCvu9gTeZJRV+68nMXexNxR2K8U+a9c2PgGc9pUxZPkdxYc1ejXTgObV7IbaPAw8CoXU13JIpUjRlweECBMMIE5UxCaBF+baq1hPWKb9PWg6sI8x3YYm2dwy2kLjyDp+7Rjrg=
+#  - secure: rwJ0Nq4QiGd300uA7gq/WYiNvDGaYJQsgVILdhxkP5kylRjuQdxw9lWvzyHy7bWMJCHi/L1N8OjSkgnpYo4T8u93JqXzgQMVJAMvH967MRK18Mf7+rp/DL5lOjVJfmZIPtMnFXTvglxgEhX41WoBaD5aist65k76TXUvsCErZUL2Ptgzs0dOb5AltyAz0LMBsWuzC3+IRhG7DiUB+GX0Q0HLiu3UlmRnTAHpmVcaGRH385UUzMM3eX9LwR3Fey9fJsY/Ggjuuxa6hMhinkQIgVcggqM4hqqFgJ4bCeuazYICSh6JAde5/yxEC1C35eqp3f+gWf5NZa0cRmPvgjwLws+LP6sYIO4wodJkr3iQHphQxYXkhUIVqt8sDtfFuysjl6D9+Cgli0YHFwkTJ9CW7X44JWrn/5/Yyt3O/u2yvrdbP2l5RwpjPig514CUxPFzz9UD7sv4To5w31nOLTy/veqh/E4YidoTZbZ0A353CYgWZ/vQnml4JclVPt6a6gLQEsetzmyx0CGG8w7usinTC0wmCP3Lz4AwAThjUNMD0zJjX8ugIE5O0gIY5SCR5XFrnIXbstc7JyXw2njeVyn4AGxw4T0fCNkg4Fb5SO+qzQVeBF3+leKS76vSc5fsytbfixm909NZIw1reGeAxAkqH74rApaDMkTpWSSc4wABCgs=
 
-    # Linux g++7
-    - os: linux
+#matrix:
+#  include:
+#  - os: linux
+#    compiler: g++
+#    addons:
+#      apt:
+#        sources:
+#        - ubuntu-toolchain-r-test
+#        packages:
+#        - g++-7
+#    env:
+#    - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+#  - os: linux
+#    compiler: g++
+#    addons:
+#      apt:
+#        sources:
+#        - ubuntu-toolchain-r-test
+#        packages:
+#        - g++-8
+#    env:
+#    - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+#  - os: linux
+#    compiler: clang++
+#    addons:
+#      apt:
+#        sources:
+#        - ubuntu-toolchain-r-test
+#        - llvm-toolchain-trusty-6.0
+#        packages:
+#        - clang-6.0
+#        - g++-7
+#    env:
+#    - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
+#  - os: linux
+#    compiler: clang++
+#    addons:
+#      apt:
+#        sources:
+#        - ubuntu-toolchain-r-test
+#        - llvm-toolchain-trusty-7
+#        packages:
+#        - clang-7
+#        - g++-7
+#    env:
+#    - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
+
+
+
+jobs:
+  include:
+    - stage: test
+      os: linux
       compiler: g++
       addons:
         apt:
@@ -23,9 +78,25 @@ matrix:
             - g++-7
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-    
-    # Linux g++8
-    - os: linux
+      before_install:
+        - eval "${MATRIX_EVAL}"
+        - wget -O cmake.sh https://cmake.org/files/v3.10/cmake-3.10.0-rc1-Linux-x86_64.sh
+        - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
+      install:
+        - echo ${PATH}
+        - cmake --version
+        - echo ${CXX}
+        - "${CXX} --version"
+        - "${CXX} -v"
+      script:
+        - mkdir build
+        - cd build
+        - cmake ../
+        - cmake --build .
+        - ctest
+
+    - stage: test
+      os: linux
       compiler: g++
       addons:
         apt:
@@ -35,53 +106,103 @@ matrix:
             - g++-8
       env:
         - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-    
-    ## OSX
-    #- os: osx
-    #  osx_image: xcode8
-    #  env:
-    #    - MATRIX_EVAL="brew install gcc && CC=gcc-7 && CXX=g++-7"
+      before_install:
+        - eval "${MATRIX_EVAL}"
+        - wget -O cmake.sh https://cmake.org/files/v3.10/cmake-3.10.0-rc1-Linux-x86_64.sh
+        - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
+      install:
+        - echo ${PATH}
+        - cmake --version
+        - echo ${CXX}
+        - "${CXX} --version"
+        - "${CXX} -v"
+      script:
+        - mkdir build
+        - cd build
+        - cmake ../
+        - cmake --build .
+        - ctest
 
-    # Linux clang++6
-    - os: linux
+    - stage: test
+      os: linux
       compiler: clang++
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-6.0']
-          packages: ['clang-6.0', 'g++-7']
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+          packages:
+            - clang-6.0
+            - g++-7
       env:
         - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
-        #- CXXFLAGS=-std=c++1z
-    
-    # Linux clang++7
-    - os: linux
+      before_install:
+        - eval "${MATRIX_EVAL}"
+        - wget -O cmake.sh https://cmake.org/files/v3.10/cmake-3.10.0-rc1-Linux-x86_64.sh
+        - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
+      install:
+        - echo ${PATH}
+        - cmake --version
+        - echo ${CXX}
+        - "${CXX} --version"
+        - "${CXX} -v"
+      script:
+        - mkdir build
+        - cd build
+        - cmake ../
+        - cmake --build .
+        - ctest
+
+    - stage: test
+      os: linux
       compiler: clang++
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-7']
-          packages: ['clang-7', 'g++-7']
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-7
+          packages:
+            - clang-7
+            - g++-7
       env:
         - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
-        #- CXXFLAGS=-std=c++1z
+      before_install:
+        - eval "${MATRIX_EVAL}"
+        - wget -O cmake.sh https://cmake.org/files/v3.10/cmake-3.10.0-rc1-Linux-x86_64.sh
+        - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
+      install:
+        - echo ${PATH}
+        - cmake --version
+        - echo ${CXX}
+        - "${CXX} --version"
+        - "${CXX} -v"
+      script:
+        - mkdir build
+        - cd build
+        - cmake ../
+        - cmake --build .
+        - ctest
 
-    ## OSX
-    #- os: osx
-    #  osx_image: xcode10
-    #  compiler: clang
-    #  env:
-    #    - CXX=clang++
-
-# install cmake 3.10
-before_install:
-  - eval "${MATRIX_EVAL}"
-  - wget -O cmake.sh https://cmake.org/files/v3.10/cmake-3.10.0-rc1-Linux-x86_64.sh 
-  - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
-  #- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
-
-# Build steps
-script:
-  - mkdir build
-  - cd build
-  - cmake ../
-  - make
-  - ctest
+    - stage: deploy
+      os: linux
+      sudo: required
+      language: python
+      python: '3.6'
+      env:
+        - CONAN_GCC_VERSIONS=8
+        - CONAN_DOCKER_IMAGE=conanio/gcc8
+        - CONAN_PACKAGE_VERSION="2.1.0"
+        - CONAN_USERNAME="hopobcn"
+        - CONAN_PACKAGE_NAME="cpp-taskflow"
+        - CONAN_HEADER_ONLY="True"
+        - CONAN_UPLOAD="https://api.bintray.com/conan/hopobcn/public"
+        - secure: mpx6qypPN3OFO4RZS/Kg6dAAAzizoM/Rz2e1L3S/9wjD3h/pN324JZbbKlmDixNVVSbbdHH74Z6HxCjQ9fFUOUYs+eLhwxlKt3wpgMTW2Sqraw+PqgUyU+H11D4nrcRNvpZbSQBB2WZP8PLSyzlSD1XlNkNgCqXXcV5A0dpSXm+6P8c5A/3hQ2i5x3x6Y1IAlfnvQO2HAGI5VD9XhLC280jydYNSaageKUgsXbN3p5bnjfWPcybOoK8i159mjkM1MOZX2awVqIrqXSyTtqbKPEhjY3h9/wBAXZG8iONef9rbiPKId31wnhtXzURTd93z5GjK52z0Khn2VKNcBh0dA5kU+6yVEAOoHIGRz0/Vskdgt60bMsIdWrftb9j16aegTiFprrJ66uARo6Mf9GHUM4z8dF7GiU3RNn7dwKiqWJ0HxMaXhNQuVONARVP/tKYAf9NadQ2DMCxTrfxFZqIjxXMJ9zwoA6wkJDwEHuGmEyjgRwBHVa9JG23Lqc8Bdg5M07RYWbZWQBXsRAvvr8QfCninP1eYgfECMfZ5PCOCvu9gTeZJRV+68nMXexNxR2K8U+a9c2PgGc9pUxZPkdxYc1ejXTgObV7IbaPAw8CoXU13JIpUjRlweECBMMIE5UxCaBF+baq1hPWKb9PWg6sI8x3YYm2dwy2kLjyDp+7Rjrg=
+        - secure: rwJ0Nq4QiGd300uA7gq/WYiNvDGaYJQsgVILdhxkP5kylRjuQdxw9lWvzyHy7bWMJCHi/L1N8OjSkgnpYo4T8u93JqXzgQMVJAMvH967MRK18Mf7+rp/DL5lOjVJfmZIPtMnFXTvglxgEhX41WoBaD5aist65k76TXUvsCErZUL2Ptgzs0dOb5AltyAz0LMBsWuzC3+IRhG7DiUB+GX0Q0HLiu3UlmRnTAHpmVcaGRH385UUzMM3eX9LwR3Fey9fJsY/Ggjuuxa6hMhinkQIgVcggqM4hqqFgJ4bCeuazYICSh6JAde5/yxEC1C35eqp3f+gWf5NZa0cRmPvgjwLws+LP6sYIO4wodJkr3iQHphQxYXkhUIVqt8sDtfFuysjl6D9+Cgli0YHFwkTJ9CW7X44JWrn/5/Yyt3O/u2yvrdbP2l5RwpjPig514CUxPFzz9UD7sv4To5w31nOLTy/veqh/E4YidoTZbZ0A353CYgWZ/vQnml4JclVPt6a6gLQEsetzmyx0CGG8w7usinTC0wmCP3Lz4AwAThjUNMD0zJjX8ugIE5O0gIY5SCR5XFrnIXbstc7JyXw2njeVyn4AGxw4T0fCNkg4Fb5SO+qzQVeBF3+leKS76vSc5fsytbfixm909NZIw1reGeAxAkqH74rApaDMkTpWSSc4wABCgs=
+      services:
+        - docker
+      install:
+        - chmod +x ./conan/ci/install.sh
+        - "./conan/ci/install.sh"
+      script:
+        - chmod +x ./conan/ci/build.sh
+        - "./conan/ci/build.sh"
